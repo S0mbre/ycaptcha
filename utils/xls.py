@@ -9,21 +9,21 @@ import xlsxwriter
 from .utils import *
 
 
-def images_to_excel(imgdir, xlsfile, nfiles=-1, imgtypes=('jpg', 'bmp', 'png'), recurse=False, scale=5.0):
+def images_to_excel(imgdir, xlsfile, nfiles=-1, imgtypes=('jpg',), recurse=False, scale=1.0):
     """
     https://xlsxwriter.readthedocs.io/example_images.html
     """
         
     wb = xlsxwriter.Workbook(xlsfile)
     ws = wb.add_worksheet()
-    ws.set_column('A:A', 30)
+    ws.set_column('A:A', 80)
     ws.set_column('B:B', 30)
     row = 1
     
     def write_img(imgfile):
         nonlocal ws
         nonlocal row
-        ws.set_row(row - 1, 30)
+        ws.set_row(row - 1, 50)
         ws.write('A{}'.format(row), imgfile)
         ws.insert_image('B{}'.format(row), imgfile, None if scale == 1.0 else {'x_scale': scale, 'y_scale': scale})
         row += 1

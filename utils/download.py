@@ -51,7 +51,8 @@ def download_sample_captchas(user, apikey, domain='com', ncap=1, directory=None,
         - domain [str]: either 'ru' (Russian Yandex) or 'com' (worldwide Yandex)
         - ncap [int]: how many captchas to retrieve (default = 1)
         - directory [str]: the save directory; if None, the current dir's "imgset" folder will be used
-        - cback [object]: callback function return Boolean: True = continue, False = stop
+        - cback [object]: callback function returning the original downloaded file path or a new one; 
+                          if the return results evaluates to False (e.g. empty string), downloading will stop
     """
     root = directory if not directory is None else os.path.abspath(IMG_DIRECTORY)
     if not os.path.isdir(root): os.makedirs(root)
@@ -73,13 +74,17 @@ def download_sample_captchas(user, apikey, domain='com', ncap=1, directory=None,
                 continue
             fname = hashlib.md5(url.encode()).hexdigest() + IMAGE_TYPES[ftype]
             fpath = os.path.join(root, fname)
-            
-            if not cback is None and not cback(i, root, fname): break
-            
+                        
             with open(fpath, 'wb') as f:
                 f.write(res.content)
             #print_dbg('SAVED:\t' + os.path.basename(fname))
-            out_paths.append(fpath)
+            
+            if not cback is None:
+                fpath = cback(i, fpath)
+                if not fpath: break
+            
+            out_paths.append(fpath)           
+            
             
         except Exception as err:
             print_err(str(err))

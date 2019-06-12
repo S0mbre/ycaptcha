@@ -9,6 +9,7 @@ import sys
 import os
 import glob
 import requests
+from PIL import Image
 from .globalvars import *
 
 
@@ -38,7 +39,31 @@ def walk_dir(root_path, recurse, file_types, file_process_function):
     for d, dirs, files in os.walk(os.path.abspath(root_path)):
         for f in files:
             ext = os.path.splitext(f)[1][1:].lower()
-            if not file_types or ext in file_types:
+            if (not file_types) or (ext in file_types):
                 if file_process_function:
                     if not file_process_function(os.path.join(d, f)): return
         if not recurse: break
+    
+def convert_img(img_source, dest_dir=None, dest_format='jpg'):
+    """
+    Converts an image file passed in img_source to a given format passed in dest_format,
+    saving the result image in dest_dir (if it's set, otherwise - to the source directory).
+    The filename doesn't change, only the extension. 
+    """
+    img_path = os.path.split(img_source)
+    img_base = os.path.splitext(img_path[1])
+    img_dest = os.path.join(dest_dir if not dest_dir is None else img_path[0], '{}.{}'.format(img_base[0], dest_format))
+    if img_source == img_dest: return img_dest
+    print('Converting {}{}...'.format(*img_base), end='\t\t')
+    try:
+        if dest_format == 'jpg':
+            Image.open(img_source).convert('RGB').save(img_dest)
+        else:
+            Image.open(img_source).save(img_dest)
+        print('DONE')
+        return img_dest
+    except:
+        return ''
+
+def convert_images(dir_source, recurse=False, dir_dest=None, imgtypes=('gif',), dest_format='jpg'):
+    walk_dir(dir_source, recurse, imgtypes, lambda filein: convert_img(filein, dir_dest, dest_format))

@@ -41,7 +41,7 @@ class CLI(CLIBase):
            
     #----- COMMAND METHODS ------#    
     
-    def cmd_download(self, user, apikey, domain='com', ncap=1, imgdir=None):
+    def cmd_download(self, user, apikey, domain='com', ncap=1, imgdir=None, saveas='jpg'):
         """
         Downloads requested number of Yandex captchas as [GIF] images to indicated directory.
         PARAMS:
@@ -50,13 +50,19 @@ class CLI(CLIBase):
             - domain [str]: OPTIONAL: either 'ru' (Russian Yandex) or 'com' (worldwide Yandex)
             - ncap [int]: OPTIONAL: how many captchas to retrieve (default = 1)
             - directory [str]: OPTIONAL: the save directory; if None, the current dir's "imgset" folder will be used
+            - saveas [str]: OPTIONAL: convert downloaded (GIF) to another image format (default = JPG);
+                            Empty string = don't convert
         RETURNS:
             Status text.
         """
         
-        def download_callback(i, root, filename):
-            print(COLOR_BRIGHT + '{}:\t{} >> {}...'.format((i+1), filename, root))
-            return True        
+        def download_callback(i, fpath):
+            print(COLOR_BRIGHT + '{}:\t>> {}...'.format((i+1), fpath))
+            new_path = fpath 
+            if saveas: 
+                new_path = convert_img(fpath, dest_format=saveas)
+                if new_path: os.remove(fpath)
+            return new_path        
 
         images = download_sample_captchas(user, apikey, domain, ncap, imgdir, download_callback)
         return 'Saved {} files to {}'.format(len(images), imgdir if not imgdir is None else IMG_DIRECTORY)
@@ -65,8 +71,9 @@ class CLI(CLIBase):
         """
         Copies saved images to Excel spreadsheet (for storing captcha values).
         """
-        images_to_excel(imgdir if not imgdir is None else IMG_DIRECTORY, 
-                        xlsfile if not xlsfile is None else IMG_DIRECTORY + '/table.xlsx', nfiles)
+        img_dir = imgdir if not imgdir is None else IMG_DIRECTORY
+        #convert_images(img_dir)
+        images_to_excel(img_dir, xlsfile if not xlsfile is None else IMG_DIRECTORY + '/table.xlsx', nfiles, scale=1.0)
                 
             
 ## ******************************************************************************** ##             
