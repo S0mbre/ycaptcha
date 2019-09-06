@@ -39,4 +39,4 @@ IPSERVICES = ['https://api.ipify.org', 'https://ident.me', 'https://ipecho.net/p
 HTTP_PROXIES = None # or dict, e.g. {'http': 'http://ip:port', 'https': 'http://ip:port'}
 HTTP_TIMEOUT = 5                 # ожидание соединения и ответа (сек.) None = вечно
 
-IMG_DIRECTORY = 'imgset'
+IMG_DIRECTORY = 'imgset/original'

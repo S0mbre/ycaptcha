@@ -9,7 +9,7 @@ import xlsxwriter
 from .utils import *
 
 
-def images_to_excel(imgdir, xlsfile, nfiles=-1, imgtypes=('jpg',), recurse=False, scale=1.0):
+def images_to_excel(imgdir, xlsfile, nfiles=-1, imgtypes=('jpg', 'png'), recurse=False, scale=1.0):
     """
     https://xlsxwriter.readthedocs.io/example_images.html
     """

@@ -7,7 +7,6 @@ This file is part of the ycaptcha project hosted at https://github.com/S0mbre/yc
 
 import sys
 import os
-import glob
 import requests
 from PIL import Image
 from .globalvars import *
